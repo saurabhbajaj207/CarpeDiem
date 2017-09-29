@@ -1,46 +1,61 @@
 import os
 from getpass import getpass
 import atexit
+from fileLib import updateFiles
+from cryptLib import encrypt, decrypt, getKey, generateChecksum
 
 FLAG = "Flag.txt"
 
 
-def get_key():
-    key = ''
-    while key == '':
-        key = getpass('Enter password> ')
-    return key
+def getPassword():
+    password = ''
+    while password == '':
+        password = getpass('Enter password> ')
+    return password
 
 
 def exit_handler():
-    print 'My application is ending!'
+    print 'Seize the Day!'
 
 
-def createFlagFile():
+def validatePassword(password):
+    file = open(FLAG, "r")
+    checksum = file.read()
+    file.close()
+    temp = generateChecksum(password)
+    if checksum != temp:
+        print "password is incorrect. Please Retry"
+        exit(1)
+
+
+def createFlagFile(password):
     file = open(FLAG, 'w')
-    file.write('keys Updated')
+    file.write(generateChecksum(password))
     file.close()
 
 
 if __name__ == '__main__':
     if not os.path.exists(FLAG):
-        print "Please enter the password"
-        key1 = getpass(">")
-        key2 = getpass("Re-Enter >")
-        if (key1 != key2):
-            print "Keys don't match. Please reEnter the password"
+        print "First time User. Please enter the password"
+        password1 = getpass(">")
+        password2 = getpass("Re-Enter >")
+        if (password1 != password2):
+            print "Passwords don't match.Please Retry"
             exit(1)
 
-        #updateFile(encrypt, getFileList(), key2)
-        createFlagFile()
+        atexit.register(exit_handler)
+        updateFiles(encrypt, password2)
+        createFlagFile(password2)
 
     else:
         atexit.register(exit_handler)
-        print "Enter the Password to DeCrypt"
-        key = get_key()
-
-        #updateFile(decrypt, getFileList(), key2)
+        print "Welcome to CarpeDiem!!"
+        password = getPassword()
+        validatePassword(password)
+        updateFiles(decrypt, password)
 
         tag = ''
         while tag != 'e':
             tag = raw_input("press 'e' to exit")
+            updateFiles(encrypt, password)
+            exit(0)
