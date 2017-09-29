@@ -1,8 +1,8 @@
 # Contains all File manipulation functions
 import os
-from cryptLib import encrypt, decrypt
+from datetime import datetime
 
-DIARY_DIR = "MyDiary"
+DIARY_DIR = ".\\MyDiary"
 
 
 def getFileList(dirName):
@@ -26,3 +26,25 @@ def updateFiles(function, password, dirName=DIARY_DIR):
         f = open(fname, 'w')
         f.write(function(data, password))
         f.close()
+
+
+def createNewEntry(date= ""):
+    if date == "":
+        now = datetime.now()
+        yearPath = DIARY_DIR + "\\" + str(now.year)
+        monthPath = yearPath + "\\" + str(now.month)
+        dayPath = monthPath + "\\" + str(now.day) + ".txt"
+    else:
+        date = date.split("/")
+        yearPath = DIARY_DIR + "\\" + str(date[2])
+        monthPath = yearPath + "\\" + str(date[1])
+        dayPath = monthPath + "\\" + str(date[0]) + ".txt"
+
+    if not os.path.exists(yearPath):
+        os.makedirs(yearPath)
+    if not os.path.exists(monthPath):
+        os.makedirs(monthPath)
+
+    f = open(dayPath, 'a')
+    f.close()
+    os.system("notepad.exe " + dayPath)

@@ -1,9 +1,11 @@
 import os
 from getpass import getpass
 import atexit
-from fileLib import updateFiles, DIARY_DIR
+from fileLib import updateFiles, DIARY_DIR, createNewEntry
 from cryptLib import encrypt, decrypt, generateChecksum
 
+# **IMPORTANT**:Flag.txt contains checksum to verify the password
+# so that user accidentally does not use wrong password to decrypt and encrypt
 FLAG = "Flag.txt"
 
 
@@ -28,7 +30,8 @@ def validatePassword(password):
         exit(1)
 
 
-def createFlagFile(password):
+# sets environment for New user by creating MyDiary and Flag.txt
+def setEnv(password):
     file = open(FLAG, 'w')
     file.write(generateChecksum(password))
     file.close()
@@ -37,6 +40,7 @@ def createFlagFile(password):
 
 
 if __name__ == '__main__':
+    # First time User
     if not os.path.exists(FLAG):
         print "First time User. Please enter the password"
         password1 = getpass(">")
@@ -47,8 +51,9 @@ if __name__ == '__main__':
 
         atexit.register(exit_handler)
         updateFiles(encrypt, password2)
-        createFlagFile(password2)
+        setEnv(password2)
 
+    # User had already set the password
     else:
         atexit.register(exit_handler)
         print "Welcome to CarpeDiem!!"
@@ -56,8 +61,18 @@ if __name__ == '__main__':
         validatePassword(password)
         updateFiles(decrypt, password)
 
-        tag = ''
-        while tag != 'e':
-            tag = raw_input("press 'e' to exit")
-            updateFiles(encrypt, password)
-            exit(0)
+        while True:
+            print "Enter yor choice"
+            print "'n':Create new Entry <space> [optional argument- dd/mm/yyyy]"
+            print "'q':quit application "
+            input = raw_input("\>>>")
+            choice = input.split(" ")
+            if choice[0] == 'n':
+                if len(choice) == 1:
+                    createNewEntry()
+                else:
+                    createNewEntry(choice[1])
+
+            elif choice[0] == 'q':
+                updateFiles(encrypt, password)
+                exit(0)
