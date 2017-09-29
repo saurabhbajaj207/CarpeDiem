@@ -1,6 +1,8 @@
 # Contains all File manipulation functions
 import os
-from cryptLib import encrypt,decrypt
+from cryptLib import encrypt, decrypt
+
+DIARY_DIR = "MyDiary"
 
 
 def getFileList(dirName):
@@ -14,7 +16,7 @@ def getFileList(dirName):
     return fileList
 
 
-def updateFiles(function, password, dirName = ".\MyDiary"):
+def updateFiles(function, password, dirName=DIARY_DIR):
     fileList = getFileList(dirName)
     for fname in fileList:
         f = open(fname, 'r')
@@ -24,4 +26,3 @@ def updateFiles(function, password, dirName = ".\MyDiary"):
         f = open(fname, 'w')
         f.write(function(data, password))
         f.close()
-

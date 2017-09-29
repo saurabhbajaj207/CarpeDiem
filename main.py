@@ -1,8 +1,8 @@
 import os
 from getpass import getpass
 import atexit
-from fileLib import updateFiles
-from cryptLib import encrypt, decrypt, getKey, generateChecksum
+from fileLib import updateFiles, DIARY_DIR
+from cryptLib import encrypt, decrypt, generateChecksum
 
 FLAG = "Flag.txt"
 
@@ -32,6 +32,8 @@ def createFlagFile(password):
     file = open(FLAG, 'w')
     file.write(generateChecksum(password))
     file.close()
+    if not os.path.exists(DIARY_DIR):
+        os.makedirs(DIARY_DIR)
 
 
 if __name__ == '__main__':
