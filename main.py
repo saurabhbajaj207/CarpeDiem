@@ -6,7 +6,7 @@ from cryptLib import encrypt, decrypt, generateChecksum
 
 # **IMPORTANT**:Flag.txt contains checksum to verify the password
 # so that user accidentally does not use wrong password to decrypt and encrypt
-FLAG = "Flag.txt"
+FLAG = DIARY_DIR+"\\Flag.txt"
 
 
 def getPassword():
@@ -32,16 +32,16 @@ def validatePassword(password):
 
 # sets environment for New user by creating MyDiary and Flag.txt
 def setEnv(password):
-    file = open(FLAG, 'w')
-    file.write(generateChecksum(password))
-    file.close()
     if not os.path.exists(DIARY_DIR):
         os.makedirs(DIARY_DIR)
+        file = open(FLAG, 'w')
+        file.write(generateChecksum(password))
+        file.close()
 
 
 if __name__ == '__main__':
     # First time User
-    if not os.path.exists(FLAG):
+    if not os.path.exists(DIARY_DIR):
         print "First time User. Please enter the password"
         password1 = getpass(">")
         password2 = getpass("Re-Enter >")
@@ -50,7 +50,6 @@ if __name__ == '__main__':
             exit(1)
 
         atexit.register(exit_handler)
-        updateFiles(encrypt, password2)
         setEnv(password2)
 
     # User had already set the password

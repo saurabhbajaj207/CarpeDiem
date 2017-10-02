@@ -7,13 +7,13 @@ DIARY_DIR = ".\\MyDiary"
 
 def getFileList(dirName):
     fileList = []
-    for path, subdirs, files in os.walk(dirName):
+    for path, subdirs, files in os.walk(dirName, topdown=True):
         for filename in files:
             f = os.path.join(path, filename)
             if f.endswith(".txt"):
                 fileList.append(f)
-
-    return fileList
+    #fileList[1:] is used to exclude Flag.txt from encryption
+    return fileList[1:]
 
 
 def updateFiles(function, password, dirName=DIARY_DIR):
@@ -24,11 +24,19 @@ def updateFiles(function, password, dirName=DIARY_DIR):
         f.close()
 
         f = open(fname, 'w')
-        f.write(function(data, password))
+        text = function(data, password)
+        if text == None:
+            print "Incorrect Decryption key"
+            print "Contents of Flag.txt were either changed or deleted"
+            f.write(data)
+            f.close()
+            exit(1)
+
+        f.write(text)
         f.close()
 
 
-def createNewEntry(date= ""):
+def createNewEntry(date=""):
     if date == "":
         now = datetime.now()
         yearPath = DIARY_DIR + "\\" + str(now.year)
