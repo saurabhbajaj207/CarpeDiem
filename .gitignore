@@ -4,3 +4,4 @@ Flag.txt
 MyDiary
 *.json
 *.txt
+!requirements.txt
