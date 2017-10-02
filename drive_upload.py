@@ -8,9 +8,11 @@ from fileLib import DIARY_DIR
 
 def createDriveDirectory(name, parentId, retryCount=3):
     try:
+        # specifying required fields is recommended. Else API returns more than 30 values
+        # which will use extra bandwidth
         files = drive.ListFile(
             {'q': u"'%s' in parents and title = '%s'and trashed = false" % (
-                parentId, name.replace("'", "\\'"))}).GetList()
+                parentId, name.replace("'", "\\'")), 'fields': "nextPageToken, items(id)"}).GetList()
         if len(files) > 0:  # checking whether folder was already present
             return files[0]['id']
 
@@ -36,7 +38,8 @@ def createDriveFile(filepath, parentId, retryCount=3):
         print "Uploading.... " + name
         files = drive.ListFile(
             {'q': u"'%s' in parents and title = '%s' and trashed = false" % (
-                parentId, name.replace("'", "\\'"))}).GetList()
+                parentId, name.replace("'", "\\'")),
+             'fields': "nextPageToken, items(id, md5Checksum)"}).GetList()
         if len(files) > 0:  # checking whether file was already present
             file = files[0]
             if file['md5Checksum'] == md5(filepath):  # checking for changes in file
