@@ -7,6 +7,9 @@ from Crypto.Util import Counter
 # helps in identifying already encrypted files
 ENCODED_HEADER = '=*=EnC0d3dH3Ad3R==*'
 
+# ensures that file is encoded and decoded using correct(original) password
+# even if someone changes Flag.txt to trick validation function
+CHECKSUM = 'ENCODE_CHECKSUM'
 
 def generateChecksum(password):
     return getKey(getKey(password))
@@ -23,7 +26,7 @@ def encrypt(plainText, password):
     key = getKey(password)
     ctr = Counter.new(128)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
-    return ENCODED_HEADER + cipher.encrypt(plainText)
+    return ENCODED_HEADER + cipher.encrypt(plainText + CHECKSUM)
 
 
 def decrypt(cipherText, password):
@@ -34,4 +37,8 @@ def decrypt(cipherText, password):
     key = getKey(password)
     ctr = Counter.new(128)
     cipher = AES.new(key, AES.MODE_CTR, counter=ctr)
-    return cipher.decrypt(cipherText)
+    plaintext = cipher.decrypt(cipherText)
+    if plaintext[-len(CHECKSUM):] != CHECKSUM:
+        return None
+
+    return plaintext[0:-len(CHECKSUM)]

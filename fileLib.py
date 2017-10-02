@@ -24,7 +24,15 @@ def updateFiles(function, password, dirName=DIARY_DIR):
         f.close()
 
         f = open(fname, 'w')
-        f.write(function(data, password))
+        text = function(data, password)
+        if text == None:
+            print "Incorrect Decryption key"
+            print "Contents of Flag.txt were either changed or deleted"
+            f.write(data)
+            f.close()
+            exit(1)
+
+        f.write(text)
         f.close()
 
 
