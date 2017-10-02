@@ -9,9 +9,18 @@
 + Intuitive directory tree structure for diary entries(year->month->day format).
 
 + To run the application:
-
+    
     1)Change the folder to CarpeDiem in command prompt.
     
     2)Then type- "venv\Scripts\activate" to activate virtualenv environment.
     
-    3)Type "python main.py" to run the application.
+    3)Type "python main.py" to run the application.(installed python2 required)
+    
+    OR
+    
+    1)install pycrypto lib using "pip install pycrypto"
+    
+    2)Change the folder to CarpeDiem in command prompt.
+    
+    3)Type "python main.py" to run the application.(installed python2 required)
+    
