@@ -12,7 +12,7 @@ def getFileList(dirName):
             f = os.path.join(path, filename)
             if f.endswith(".txt"):
                 fileList.append(f)
-    #fileList[1:] is used to exclude Flag.txt from encryption
+    # fileList[1:] is used to exclude Flag.txt from encryption
     return fileList[1:]
 
 
@@ -37,16 +37,19 @@ def updateFiles(function, password, dirName=DIARY_DIR):
 
 
 def createNewEntry(date=""):
+    month_list = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                  'August', 'September', 'October', 'November', 'December']
+
     if date == "":
         now = datetime.now()
         yearPath = DIARY_DIR + "\\" + str(now.year)
-        monthPath = yearPath + "\\" + str(now.month)
-        dayPath = monthPath + "\\" + str(now.day) + ".txt"
+        monthPath = yearPath + "\\" + str(month_list[now.month - 1])
+        dayPath = monthPath + "\\" + str(int(now.day)) + ".txt"
     else:
         date = date.split("/")
         yearPath = DIARY_DIR + "\\" + str(date[2])
-        monthPath = yearPath + "\\" + str(date[1])
-        dayPath = monthPath + "\\" + str(date[0]) + ".txt"
+        monthPath = yearPath + "\\" + str(month_list[date[1] - 1])
+        dayPath = monthPath + "\\" + str(int(date[0])) + ".txt"
 
     if not os.path.exists(yearPath):
         os.makedirs(yearPath)

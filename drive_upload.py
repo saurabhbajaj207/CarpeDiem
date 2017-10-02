@@ -64,52 +64,61 @@ def md5(filepath):
         return hashlib.md5(file.read()).hexdigest()
 
 
-gauth = GoogleAuth()
-# Try to load saved client credentials
-gauth.LoadCredentialsFile("mycreds.txt")
-if gauth.credentials is None:
-    # Authenticate if they're not there
-    gauth.LocalWebserverAuth()
-elif gauth.access_token_expired:
-    # Refresh them if expired
-    gauth.Refresh()
-else:
-    # Initialize the saved creds
-    gauth.Authorize()
-# Save the current credentials to a file
-gauth.SaveCredentialsFile("mycreds.txt")
-
-drive = GoogleDrive(gauth)
-print "Uploading...."
-backupFolder = drive.ListFile({'q': "'root' in parents and title = '__BACKUP__'"}).GetList()
-if len(backupFolder) > 0:
-    backupFolder = backupFolder[0]
-else:
-    print "Can't find backup folder. Please create '__BACKUP__' folder on google drive"
-    exit(1)
-
-folderToBackup = DIARY_DIR
-
-# so same name as returned by os.walk
-folderToBackup = os.path.abspath(folderToBackup)
-
-driveIds = {}
-name = os.path.basename(folderToBackup)
-folderToBackupId = createDriveDirectory(name, backupFolder["id"])
-driveIds[folderToBackup] = folderToBackupId
-
-for root, dirs, files in os.walk(folderToBackup):
-    if root in driveIds:
-        rootDirId = driveIds[root]
+def googleAuthentication():
+    gauth = GoogleAuth()
+    # Try to load saved client credentials
+    gauth.LoadCredentialsFile("mycreds.txt")
+    if gauth.credentials is None:
+        # Authenticate if they're not there
+        gauth.LocalWebserverAuth()
+    elif gauth.access_token_expired:
+        # Refresh them if expired
+        gauth.Refresh()
     else:
-        print "Unexpected: Cannot find Id. Abort"
+        # Initialize the saved creds
+        gauth.Authorize()
+    # Save the current credentials to a file
+    gauth.SaveCredentialsFile("mycreds.txt")
+    return gauth
+
+
+def upload_files_folders():
+    folderToBackup = DIARY_DIR
+
+    # so same name as returned by os.walk
+    folderToBackup = os.path.abspath(folderToBackup)
+
+    driveIds = {}
+    name = os.path.basename(folderToBackup)
+    folderToBackupId = createDriveDirectory(name, backupFolder["id"])
+    driveIds[folderToBackup] = folderToBackupId
+
+    for root, dirs, files in os.walk(folderToBackup):
+        if root in driveIds:
+            rootDirId = driveIds[root]
+        else:
+            print "Unexpected: Cannot find Id. Abort"
+            exit(1)
+
+        for _dir in dirs:
+            dirId = createDriveDirectory(_dir, rootDirId)
+            driveIds[os.path.join(root, _dir)] = dirId
+
+        for file in files:
+            filepath = os.path.join(root, file)
+            filepath = filepath.decode('utf8')
+            createDriveFile(filepath, rootDirId)
+
+
+if __name__ == '__main__':
+    gauth = googleAuthentication()
+    drive = GoogleDrive(gauth)
+    print "Uploading...."
+    backupFolder = drive.ListFile({'q': "'root' in parents and title = '__BACKUP__'"}).GetList()
+    if len(backupFolder) > 0:
+        backupFolder = backupFolder[0]
+    else:
+        print "Can't find backup folder. Please create '__BACKUP__' folder on google drive"
         exit(1)
 
-    for _dir in dirs:
-        dirId = createDriveDirectory(_dir, rootDirId)
-        driveIds[os.path.join(root, _dir)] = dirId
-
-    for file in files:
-        filepath = os.path.join(root, file)
-        filepath = filepath.decode('utf8')
-        fileId = createDriveFile(filepath, rootDirId)
+    upload_files_folders()
