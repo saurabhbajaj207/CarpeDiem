@@ -12,7 +12,7 @@ def getFileList(dirName):
             f = os.path.join(path, filename)
             if f.endswith(".txt"):
                 fileList.append(f)
-
+    #fileList[1:] is used to exclude Flag.txt from encryption
     return fileList[1:]
 
 

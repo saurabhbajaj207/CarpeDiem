@@ -4,6 +4,7 @@ from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
 from Crypto.Util import Counter
 
+# helps in identifying already encrypted files
 ENCODED_HEADER = '=*=EnC0d3dH3Ad3R==*'
 
 
