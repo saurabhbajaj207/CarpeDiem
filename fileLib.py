@@ -40,12 +40,12 @@ def createNewEntry(date=""):
     if date == "":
         now = datetime.now()
         yearPath = DIARY_DIR + "\\" + str(now.year)
-        monthPath = yearPath + "\\" + str(month_list[now.month - 1])
+        monthPath = yearPath + "\\" + str(month_list[int(now.month) - 1])
         dayPath = monthPath + "\\" + str(int(now.day)) + ".txt"
     else:
         date = date.split("/")
         yearPath = DIARY_DIR + "\\" + str(date[2])
-        monthPath = yearPath + "\\" + str(month_list[date[1] - 1])
+        monthPath = yearPath + "\\" + str(month_list[int(date[1]) - 1])
         dayPath = monthPath + "\\" + str(int(date[0])) + ".txt"
 
     if not os.path.exists(yearPath):
