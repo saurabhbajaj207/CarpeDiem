@@ -1,4 +1,4 @@
-import os
+import os, sys
 from getpass import getpass
 import atexit
 from fileLib import updateFiles, DIARY_DIR, createNewEntry
@@ -6,7 +6,7 @@ from cryptLib import encrypt, decrypt, generateChecksum
 
 # **IMPORTANT**:Flag.txt contains checksum to verify the password
 # so that user accidentally does not use wrong password to decrypt and encrypt
-FLAG = DIARY_DIR+"\\Flag.txt"
+FLAG = DIARY_DIR + "\\Flag.txt"
 
 
 def getPassword():
@@ -74,4 +74,5 @@ if __name__ == '__main__':
 
             elif choice[0] == 'q':
                 updateFiles(encrypt, password)
-                exit(0)
+                print "Encryption complete."
+                sys.exit(0)

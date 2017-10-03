@@ -19,21 +19,18 @@ def getFileList(dirName):
 def updateFiles(function, password, dirName=DIARY_DIR):
     fileList = getFileList(dirName)
     for fname in fileList:
-        f = open(fname, 'r')
-        data = f.read()
-        f.close()
+        with open(fname, 'rb') as f:
+            data = f.read()
 
-        f = open(fname, 'w')
-        text = function(data, password)
-        if text == None:
-            print "Incorrect Decryption key"
-            print "Contents of Flag.txt were either changed or deleted"
-            f.write(data)
-            f.close()
-            exit(1)
+        with open(fname, 'wb') as f:
+            text = function(data, password)
+            if text == None:
+                print "Incorrect Decryption key"
+                print "Contents of Flag.txt were either changed or deleted"
+                f.write(data)
+                exit(1)
 
-        f.write(text)
-        f.close()
+            f.write(text)
 
 
 def createNewEntry(date=""):

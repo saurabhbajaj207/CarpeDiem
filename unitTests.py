@@ -29,6 +29,8 @@ class TestMethods(unittest.TestCase):
         os.makedirs("Folder1")
         os.makedirs(".\\Folder1\\Folder2")
         os.makedirs(".\\Folder1\\Folder3")
+        f = open(".\\Folder1\\" +"\\hello.txt", 'w')
+        f.close()
         for path, subdirs, files in os.walk("Folder1"):
             i = 1
             for dir in subdirs:

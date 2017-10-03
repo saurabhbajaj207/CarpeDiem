@@ -11,6 +11,7 @@ ENCODED_HEADER = '=*=EnC0d3dH3Ad3R==*'
 # even if someone changes Flag.txt to trick validation function
 CHECKSUM = 'ENCODE_CHECKSUM'
 
+
 def generateChecksum(password):
     return getKey(getKey(password))
 
